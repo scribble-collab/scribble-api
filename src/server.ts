@@ -9,6 +9,8 @@ import AuthenticationRouter from './auth/router';
 import DiagnosticRouter from './diagnostic/router';
 import fileHandler from './files/handler';
 import FileRouter from './files/router';
+import storyHandler from './story/handler';
+import StoryRouter from './story/router';
 import { FileStorageBackend } from './files/types';
 
 
@@ -65,6 +67,7 @@ export const init = async (
 
     const authenticationHandlerObj = authenticationHandler(env);
     const fileHandlerObj = fileHandler(env, storageBackend);
+    const storyHandlerObj = storyHandler();
 
     // auth
     server.auth.strategy('jwt', 'jwt', {
@@ -77,6 +80,7 @@ export const init = async (
     AuthenticationRouter(server, authenticationHandlerObj);
     DiagnosticRouter(server);
     FileRouter(server, fileHandlerObj);
+    StoryRouter(server, storyHandlerObj);
 
     await server.initialize();
     return {

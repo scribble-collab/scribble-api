@@ -29,6 +29,10 @@ export default function authenticationHandler(env) {
                 return left('invalidCredentials');
             }
 
+            if(!user.active){
+                return left('accountNotActive');
+            }
+        
             const match = await bcrypt.compare(
                 loginDetails.password,
                 user.password,
