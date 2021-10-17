@@ -24,4 +24,6 @@ export interface UserResponse {
     userId: number | string,
 }
 
-export type LoginError = 'invalidCredentials';
+export type LoginError =
+    | 'invalidCredentials'
+    | 'accountNotActive';

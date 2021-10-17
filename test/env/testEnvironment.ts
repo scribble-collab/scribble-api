@@ -8,7 +8,7 @@ let testEnv: undefined | any;
 
 async function resetDB() {
     const query = `
-    truncate table users, session CASCADE;
+    truncate table users, session, stories, story_tags, tags, likes, comments, followers CASCADE;
     `;
     return knex.schema.raw(query);
 }
