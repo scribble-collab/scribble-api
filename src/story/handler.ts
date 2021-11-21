@@ -1,9 +1,14 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
 import * as R from 'ramda';
-import * as repo from './repo';
-import * as likeRepo from '../like/repo';
 import * as commentRepo from '../comment/repo';
-import { StoryCreationDetails, CommentDetails, LikeDetails } from './types';
+import * as likeRepo from '../like/repo';
+import * as repo from './repo';
+import {
+    CommentDetails,
+    LikeDetails,
+    SearchStoryParams,
+    StoryCreationDetails
+} from './types';
 
 export default function storyHandler() {
     return {
@@ -18,8 +23,16 @@ export default function storyHandler() {
             return right('storyAdded');
         },
 
-        getStories: async (page = 0) => {
-            return await repo.getOriginalStories(page);
+        searchStories: async (params: SearchStoryParams) => {
+            const type = params.type;
+            const details: any = R.dissoc('type', params);
+
+            if (type === 'ORIGINAL')
+                return await repo.getOriginalStories(details);
+            else if (type === 'VERSION')
+                return await repo.getVersionStories(details);
+
+            return await repo.getAllStories(details);
         },
 
         likeStory: async (like: LikeDetails) => {

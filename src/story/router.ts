@@ -1,6 +1,11 @@
 import * as hapi from '@hapi/hapi';
 import { isLeft } from 'fp-ts/lib/Either';
-import { CommentSchema, LikeSchema, StoryCreationSchema, PageSchema } from './types';
+import {
+    CommentSchema,
+    LikeSchema,
+    StoryCreationSchema,
+    StorySearchSchema
+} from './types';
 import { wrap } from './utils';
 
 
@@ -38,14 +43,14 @@ export default function (server: hapi.Server, handler) {
         path: '/story',
         options: {
             handler: async (request, h) => {
-                const response = await handler.getStories(request.query.page);
+                const response = await handler.searchStories(request.query);
                 return h.response(response).code(200);
             },
             auth: {
                 scope: ['admin', 'user']
             },
             validate: {
-                query: PageSchema
+                query: StorySearchSchema
             },
             tags: ['api', 'story'],
             description: 'read all original stories',
