@@ -22,3 +22,14 @@ export const wrap = (response) => {
         return { message: 'Server encountered an error', status: 500 };
     }
 };
+
+export const StorySortType = {
+    'LIKES_ASC': 'ORDER BY stories.likes ASC',
+    'LIKES_DESC': 'ORDER BY stories.likes DESC',
+    'COMMENTS_ASC': 'ORDER BY stories.comments ASC',
+    'COMMENTS_DESC': 'ORDER BY stories.comments DESC',
+    'CREATED_ASC': 'ORDER BY stories."createdAt" ASC',
+    'CREATED_DESC': 'ORDER BY stories."createdAt" DESC',
+    'UPDATED_ASC': 'ORDER BY stories."updatedAt" ASC',
+    'UPDATED_DESC': 'ORDER BY stories."updatedAt" DESC'
+}

@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect, version } from 'chai';
 import { isLeft } from 'fp-ts/lib/Either';
 import * as storyRepo from '../../src/story/repo';
 import * as userRepo from '../../src/user/repo';
@@ -103,10 +103,25 @@ describe('story', async () => {
         });
         const response = await testEnv.server.inject({
             method: 'get',
-            url: '/story?page=2',
+            url: '/story?type=ALL&sort=UPDATED_DESC',
             headers: headers
         });
 
+        const originals = await testEnv.server.inject({
+            method: 'get',
+            url: '/story?type=ORIGINAL&sort=UPDATED_DESC',
+            headers: headers
+        });
+
+        const versions = await testEnv.server.inject({
+            method: 'get',
+            url: '/story?type=VERSION&sort=UPDATED_DESC',
+            headers: headers
+        });
+
+
         expect(response.statusCode).to.eql(200);
+        expect(originals.statusCode).to.eql(200);
+        expect(versions.statusCode).to.eql(200);
     });
 });

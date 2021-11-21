@@ -1,4 +1,6 @@
 import * as joi from 'joi';
+import * as R from 'ramda';
+import { StorySortType } from './utils';
 
 export const StoryCreationSchema = joi.object({
     title: joi.string().required(),
@@ -18,9 +20,32 @@ export const CommentSchema = joi.object({
     comment: joi.string().required()
 }).label('story comment');
 
-export const PageSchema = joi.object({
-    page: joi.number().optional().default(0)
-}).label('page for pagination');
+export const StorySearchSchema = joi.object({
+    type: joi.string().valid(
+        'ORIGINAL',
+        'VERSION',
+        'ALL'
+    ).required(),
+    sort: joi.string().valid(
+        ...R.keys(StorySortType)
+    ).required(),
+    query: joi.string().optional(),
+    limit: joi.number().default(100).optional(),
+    offset: joi.number().default(0).optional(),
+}).label('story search schema');
+
+export type StorySearchType = 
+    | 'ORIGINAL'
+    | 'VERSION'
+    | 'ALL';
+
+export interface SearchStoryParams {
+    type: StorySearchType,
+    sort: string,
+    limit: number,
+    offset: number,
+    query?: string,
+}
 
 export interface StoryCreationDetails {
     title: string,

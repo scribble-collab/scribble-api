@@ -1,7 +1,7 @@
 import db from '../db';
-import { Story, Tag } from './types';
+import { SearchStoryParams, Story, Tag } from './types';
 import { v4 as uuid } from 'uuid';
-import config from '../config';
+import { StorySortType } from './utils';
 
 const tagsTable = 'tags';
 const storyTagTable = 'story_tags';
@@ -52,10 +52,36 @@ export const getUserStories = async (userId: string) => {
     return await db.raw(query, { userId }).then((r) => r.rows);
 }
 
-export const getOriginalStories = async (page: number) => {
-    const limit = config.PAGINATION as number;
-    const offset = limit * page;
+export const getAllStories = async (params: SearchStoryParams) => {
+    const sort = StorySortType[params.sort];
+    const query = `
+    SELECT
+        stories.*,
+        ARRAY_AGG(tags.tag) AS tags,
+        users.username 
+    FROM
+        stories 
+        LEFT JOIN
+            story_tags 
+            ON stories.id = story_tags."storyId" 
+        LEFT JOIN
+            tags 
+            ON story_tags."tagId" = tags.id 
+        LEFT JOIN
+            users 
+            ON stories.author = users.id 
+    GROUP BY
+        stories.id,
+        users.username 
+    ${sort}
+    LIMIT :limit
+    OFFSET :offset;
+    `;
+    return await db.raw(query, {...params }).then((r) => r.rows);
+}
 
+export const getOriginalStories = async (params: SearchStoryParams) => {
+    const sort = StorySortType[params.sort];
     const query = `
     SELECT
         stories.*,
@@ -77,18 +103,15 @@ export const getOriginalStories = async (page: number) => {
     GROUP BY
         stories.id,
         users.username 
-    ORDER BY
-        stories."updatedAt" DESC
+    ${sort}
     LIMIT :limit
     OFFSET :offset;
     `;
-    return await db.raw(query, { limit, offset }).then((r) => r.rows);
+    return await db.raw(query, {...params }).then((r) => r.rows);
 }
 
-export const getVersionStories =  async (page: number, storyId: string) => {
-    const limit = config.PAGINATION as number;
-    const offset = limit * page;
-
+export const getVersionStories = async (params: SearchStoryParams) => {
+    const sort = StorySortType[params.sort];
     const query = `
     SELECT
         stories.*,
@@ -106,14 +129,13 @@ export const getVersionStories =  async (page: number, storyId: string) => {
             users 
             ON stories.author = users.id 
     WHERE
-        stories.ref = :storyId
+        stories.ref IS NOT NULL
     GROUP BY
         stories.id,
         users.username 
-    ORDER BY
-        stories."updatedAt" DESC
+    ${sort}
     LIMIT :limit
     OFFSET :offset;
     `;
-    return await db.raw(query, { limit, offset, storyId }).then((r) => r.rows);
+    return await db.raw(query, { ...params }).then((r) => r.rows);
 }

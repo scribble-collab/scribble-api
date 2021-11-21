@@ -10,8 +10,6 @@ const Config = {
     LOGGING_LEVEL: process.env.LOGGING_LEVEL || 'debug',
     STATIC_FILES_BASE_PATH: 'user-files',
     STORAGE_BACKEND: 'localConsole',
-
-    PAGINATION: process.env.PAGINATION || 20,
 };
 
 const Prod = _.merge(Config, {
