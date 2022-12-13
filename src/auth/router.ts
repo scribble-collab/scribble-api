@@ -10,7 +10,7 @@ export default function (server: hapi.Server, authHandler) {
         path: '/auth/login',
         options: {
             handler: async (request, h) => {
-                const response = await authHandler.login(request.payload,);
+                const response = await authHandler.login(request.payload);
                 if (isLeft(response)) {
                     userLoggedInFailed(response.left);
                     const formatted = wrap(response.left);
@@ -24,8 +24,8 @@ export default function (server: hapi.Server, authHandler) {
                 payload: LoginSchema,
             },
             tags: ['api', 'auth'],
-            description: 'Login',
-            notes: 'Login api  ',
+            description: 'login api for the user',
+            notes: 'logs in user and return auth token in response',
         },
     });
 

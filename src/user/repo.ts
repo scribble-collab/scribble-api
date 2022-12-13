@@ -10,7 +10,7 @@ export const getByUsername = async (username: string) => {
     return db(userTable).select('*').where({ username }).first();
 }
 
-export const getUserPasswordByUserId = async (userId) => {
+export const getUserPasswordByUserId = async (userId: string) => {
     return db(userTable).select('*').where({ id: userId }).first();
 }
 

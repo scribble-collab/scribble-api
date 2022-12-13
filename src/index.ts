@@ -18,13 +18,24 @@ process.on('unhandledRejection', (reason: any) => {
 
 const start = async () => {
     try {
-        const storageBackend: FileStorageBackend =
-            localFileStorage(config);
+        const storageBackend: FileStorageBackend = localFileStorage(config);
 
         const { server } = await Server.init(config, storageBackend);
         await server.start();
 
         console.log('Server running at:', server.info.uri);
+
+        server.events.on('response', function (request) {
+            console.log(
+                request.info.remoteAddress +
+                ': ' +
+                request.method.toUpperCase() +
+                ' ' +
+                request.path +
+                ' --> ' +
+                request.response.statusCode,
+            );
+        });
     } catch (err) {
         console.error('Error starting server: ', err);
         throw err;
